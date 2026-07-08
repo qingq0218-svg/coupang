@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易利氣 台灣通路策略評估 / 台湾チャネル戦略評価</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+JP:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F2EA;
+    --ink:#1C2233;
+    --ink-soft:#565C70;
+    --rocket:#D6472F;
+    --momo:#C93E7A;
+    --shopee:#F08A2B;
+    --teal:#1F6E63;
+    --line: rgba(28,34,51,0.14);
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:#0F1220;overflow:hidden;font-family:'Noto Sans TC','Noto Sans JP',sans-serif;}
+  [data-lang="ja"] .t-zh{display:none !important;}
+  [data-lang="zh"] .t-ja{display:none !important;}
+  [data-lang="zh"] .serif{font-family:'Noto Serif TC',serif;}
+  [data-lang="ja"] .serif{font-family:'Noto Serif JP',serif;}
+  [data-lang="zh"] .sans{font-family:'Noto Sans TC',sans-serif;}
+  [data-lang="ja"] .sans{font-family:'Noto Sans JP','Zen Kaku Gothic New',sans-serif;}
+
+  #stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+  #stage{width:1280px;height:720px;background:var(--paper);position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.5);transform-origin:center center;overflow:hidden;}
+
+  .chrome-top{position:absolute;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:50;}
+  .brand-mark{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:0.14em;color:var(--ink-soft);text-transform:uppercase;}
+  .brand-mark .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+  .lang-toggle{display:flex;background:var(--ink);border-radius:999px;padding:3px;font-size:13px;font-weight:700;gap:2px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+  .lang-toggle button{border:none;background:transparent;color:#B9BECC;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;transition:all .25s ease;}
+  .lang-toggle button.active{background:var(--paper);color:var(--ink);}
+
+  .slide{position:absolute;inset:0;padding:104px 88px 70px;opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .5s ease, transform .5s ease;}
+  .slide.active{opacity:1;visibility:visible;transform:translateX(0);}
+
+  .eyebrow{font-size:13px;letter-spacing:0.16em;color:var(--teal);font-weight:700;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .eyebrow::before{content:'';width:26px;height:2px;background:var(--teal);}
+  h1.title{font-size:42px;line-height:1.28;color:var(--ink);margin:0 0 10px;font-weight:900;}
+  h1.title.big{font-size:54px;}
+  .lede{font-size:16px;color:var(--ink-soft);line-height:1.75;max-width:800px;}
+
+  .chrome-bottom{position:absolute;bottom:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:50;}
+  .pageinfo{font-size:12px;color:var(--ink-soft);letter-spacing:0.05em;}
+  .dots{display:flex;gap:8px;}
+  .dots span{width:7px;height:7px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .25s;}
+  .dots span.active{background:var(--teal);width:22px;border-radius:4px;}
+  .navbtns{display:flex;gap:10px;}
+  .navbtns button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:16px;color:var(--ink);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+  .navbtns button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  /* ============ COVER ============ */
+  #slide-1{padding:0;}
+  .cover{position:absolute;inset:0;background:var(--ink);overflow:hidden;}
+  .cover-grid{position:absolute;inset:0;opacity:0.5;background-image:linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);background-size:64px 64px;}
+  .cover-content{position:relative;z-index:5;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 100px;}
+  .cover-eyebrow{color:var(--teal);font-size:14px;letter-spacing:0.2em;font-weight:700;margin-bottom:22px;text-transform:uppercase;}
+  .cover h1{color:var(--paper);font-size:56px;line-height:1.25;margin:0 0 20px;font-weight:900;}
+  .cover .cover-sub{color:#9BA1B5;font-size:18px;font-weight:500;max-width:680px;line-height:1.6;}
+  .cover-meta{position:absolute;bottom:56px;left:100px;right:100px;display:flex;justify-content:space-between;align-items:flex-end;}
+  .cover-meta .m{color:#8B90A3;font-size:13px;letter-spacing:0.08em;}
+  .flags{display:flex;gap:14px;align-items:center;}
+  .flagchip{font-size:12px;color:#C7CAD8;border:1px solid rgba(255,255,255,0.18);padding:6px 14px;border-radius:999px;}
+  .stamp{position:absolute; top:96px; right:100px; z-index:6; border:2px solid var(--rocket); color:var(--rocket); padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700; letter-spacing:0.08em; transform:rotate(4deg); text-transform:uppercase;}
+
+  /* ============ scale/turnover visual ============ */
+  .scalebox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 30px;margin-top:26px;}
+  .scale-row{display:flex;align-items:center;gap:20px;}
+  .scale-side{flex:1;text-align:center;}
+  .scale-side .big-label{font-size:15px;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
+  .scale-side .big-num{font-family:'Noto Serif TC',serif;font-size:46px;font-weight:900;color:var(--ink);}
+  [data-lang="ja"] .scale-side .big-num{font-family:'Noto Serif JP',serif;}
+  .scale-side .big-sub{font-size:12.5px;color:var(--ink-soft);margin-top:6px;}
+  .scale-vs{width:1px;align-self:stretch;background:var(--line);}
+  .scale-side.warn .big-num{color:var(--rocket);}
+
+  /* ============ two column compare ============ */
+  .compare-row{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:28px;}
+  .compare-col{background:var(--card);border-radius:16px;padding:24px 26px;border:1px solid var(--line);position:relative;}
+  .compare-col::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:16px 16px 0 0;}
+  .compare-col.enter::before{background:var(--rocket);}
+  .compare-col.hold::before{background:var(--teal);}
+  .compare-col h3{margin:6px 0 14px;font-size:19px;color:var(--ink);font-weight:700;}
+  .compare-col ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink);line-height:1.7;}
+  .compare-col ul li{margin-bottom:8px;}
+  .compare-tag{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;}
+  .compare-col.enter .compare-tag{color:var(--rocket);}
+  .compare-col.hold .compare-tag{color:var(--teal);}
+
+  /* ============ numbered reasons ============ */
+  .reason-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:30px;}
+  .reason{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; display:flex; gap:16px;}
+  .reason .rn{font-family:'Noto Serif TC',serif; font-size:32px; font-weight:900; color:var(--teal); flex-shrink:0;}
+  [data-lang="ja"] .reason .rn{font-family:'Noto Serif JP',serif;}
+  .reason .rt{font-size:14px; color:var(--ink); line-height:1.65;}
+  .reason .rt b{display:block; font-size:15px; margin-bottom:4px; color:var(--ink);}
+
+  /* ============ checklist ============ */
+  .checklist{margin-top:26px; display:flex; flex-direction:column; gap:14px;}
+  .check-item{display:flex; gap:16px; align-items:flex-start; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px;}
+  .check-item .ci{width:26px; height:26px; border-radius:50%; background:var(--teal); color:#fff; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900;}
+  .check-item .ct{font-size:14.5px; color:var(--ink); line-height:1.6;}
+
+  /* ============ triggers ============ */
+  .trigger-list{list-style:none; margin:26px 0 0; padding:0;}
+  .trigger-list li{display:flex; gap:16px; padding:15px 0; border-bottom:1px solid var(--line); font-size:14.5px; color:var(--ink); line-height:1.6; align-items:flex-start;}
+  .trigger-list li:last-child{border-bottom:none;}
+  .trigger-list .tag2{flex-shrink:0; font-size:11px; font-weight:700; letter-spacing:0.06em; color:#fff; background:var(--rocket); padding:5px 10px; border-radius:6px; text-transform:uppercase; margin-top:2px;}
+
+  /* ============ final ============ */
+  .final-quote{font-size:24px; line-height:1.75; color:var(--ink); max-width:960px; margin-top:10px; font-weight:500;}
+  .final-quote b{font-weight:700;}
+  .final-box{margin-top:32px; background:var(--ink); border-radius:16px; padding:28px 32px; color:var(--paper);}
+  .final-box .fb-label{font-size:12px; letter-spacing:0.12em; color:var(--teal); text-transform:uppercase; font-weight:700; margin-bottom:10px;}
+  .final-box .fb-text{font-size:16px; line-height:1.75; color:#E5E3DC;}
+
+  /* ============ market position bars ============ */
+  .statbox{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-bottom:16px;}
+  .statrow{display:flex; align-items:center; gap:18px; margin-bottom:18px;}
+  .statrow:last-child{margin-bottom:0;}
+  .statname{width:190px; font-size:14.5px; font-weight:700; color:var(--ink); flex-shrink:0;}
+  .barwrap{flex:1; height:26px; background:#EEEAE0; border-radius:6px; overflow:hidden; position:relative;}
+  .barfill{height:100%; border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:10px;}
+  .barfill span{color:#fff; font-size:12px; font-weight:700;}
+  .statval{width:150px; font-size:13px; color:var(--ink-soft); flex-shrink:0;}
+
+  /* ============ donut / market share ============ */
+  .donut-row{display:flex; align-items:center; gap:56px; margin-top:20px;}
+  .legend{display:flex; flex-direction:column; gap:14px;}
+  .legend .li{display:flex; align-items:center; gap:10px; font-size:14.5px; color:var(--ink);}
+  .legend .sw{width:12px;height:12px;border-radius:3px;}
+  .legend .num{font-weight:700; margin-left:auto; padding-left:24px;}
+
+  /* ============ three-way comparison cards ============ */
+  .cards-row{display:flex; gap:22px; margin-top:36px;}
+  .pcard{flex:1; background:var(--card); border-radius:16px; padding:26px 24px; border:1px solid var(--line); position:relative; overflow:hidden;}
+  .pcard::before{content:''; position:absolute; top:0; left:0; right:0; height:5px;}
+  .pcard.shopee::before{background:var(--shopee);}
+  .pcard.momo::before{background:var(--momo);}
+  .pcard.coupang::before{background:var(--rocket);}
+  .pcard h3{margin:6px 0 2px; font-size:21px; color:var(--ink); font-weight:700;}
+  .pcard .tag{font-size:11px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;}
+  .pcard.shopee .tag{color:var(--shopee);}
+  .pcard.momo .tag{color:var(--momo);}
+  .pcard.coupang .tag{color:var(--rocket);}
+  .pcard .block-label{font-size:12px; font-weight:700; color:var(--ink-soft); margin:16px 0 6px; letter-spacing:0.04em;}
+  .pcard ul{margin:0; padding-left:18px; font-size:13.5px; color:var(--ink); line-height:1.65;}
+  .pcard ul li{margin-bottom:4px;}
+
+  /* ============ trust-crisis timeline ============ */
+  .timeline{position:relative; margin-top:28px; padding-left:26px;}
+  .timeline::before{content:''; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line);}
+  .tl-item{position:relative; padding-bottom:26px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:''; position:absolute; left:-26px; top:4px; width:13px; height:13px; border-radius:50%; background:var(--rocket); border:3px solid var(--paper); box-shadow:0 0 0 2px var(--rocket);}
+  .tl-date{font-size:12px; font-weight:700; color:var(--rocket); letter-spacing:0.05em; margin-bottom:4px;}
+  .tl-text{font-size:14.5px; color:var(--ink); line-height:1.6; max-width:700px;}
+
+  /* ============ price comparison table ============ */
+  .price-table{width:100%; border-collapse:collapse; margin-top:22px; font-size:13.5px;}
+  .price-table th{text-align:left; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; padding:9px 14px; border-bottom:2px solid var(--ink);}
+  .price-table td{padding:13px 14px; border-bottom:1px solid var(--line); color:var(--ink); vertical-align:top;}
+  .price-table tr:last-child td{border-bottom:none;}
+  .price-table .prod{font-weight:700; max-width:190px;}
+  .price-table .price-cp{color:var(--rocket); font-weight:700; white-space:nowrap;}
+  .price-table .price-official{color:var(--teal); font-weight:700; white-space:nowrap;}
+  .price-table .subtext{display:block; font-size:11px; color:var(--ink-soft); font-weight:400; margin-top:2px;}
+  .diff-tag{display:inline-block; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:700; white-space:nowrap;}
+  .diff-tag.lower{background:rgba(31,110,99,0.12); color:var(--teal);}
+  .diff-tag.higher{background:rgba(214,71,45,0.12); color:var(--rocket);}
+  .diff-tag.flat{background:rgba(28,34,51,0.08); color:var(--ink-soft);}
+  .insight-box{margin-top:18px; background:#FBF2E9; border-left:4px solid var(--rocket); border-radius:8px; padding:16px 20px; font-size:13px; color:var(--ink); line-height:1.65;}
+  .footnote{font-size:11.5px; color:var(--ink-soft); margin-top:10px;}
+
+  @media (max-width:900px){#stage{width:100vw;height:100vh;}}
+</style>
+</head>
+<body data-lang="zh">
+
+<div id="stage-wrap">
+  <div id="stage">
+
+    <div class="chrome-top">
+      <div class="brand-mark"><span class="dot"></span>
+        <span class="t-zh">通路策略評估　CHANNEL STRATEGY REVIEW</span>
+        <span class="t-ja">チャネル戦略評価　CHANNEL STRATEGY REVIEW</span>
+      </div>
+      <div class="lang-toggle">
+        <button id="btn-zh" class="active" onclick="setLang('zh')">中文</button>
+        <button id="btn-ja" onclick="setLang('ja')">日本語</button>
+      </div>
+    </div>
+
+    <!-- SLIDE 1 : COVER -->
+    <section class="slide active" id="slide-1">
+      <div class="cover">
+        <div class="cover-grid"></div>
+        <div class="stamp serif"><span class="t-zh">暫緩投入建議</span><span class="t-ja">投資見送り提言</span></div>
+        <div class="cover-content">
+          <div class="cover-eyebrow serif">
+            <span class="t-zh">台灣總代理意見書 · 2026年7月</span>
+            <span class="t-ja">台湾総代理店 意見書・2026年7月</span>
+          </div>
+          <h1 class="serif">
+            <span class="t-zh">Coupang 通路影響評估<br>與資源配置建議</span>
+            <span class="t-ja">Coupang チャネル影響評価<br>およびリソース配分に関する提言</span>
+          </h1>
+          <div class="cover-sub sans">
+            <span class="t-zh">綜合實際銷售週轉數據與通路成本效益分析：現階段是否應將心力分散至Coupang？</span>
+            <span class="t-ja">実際の在庫回転データとチャネル費用対効果分析に基づく：現段階でCoupangにリソースを分散すべきか</span>
+          </div>
+        </div>
+        <div class="cover-meta">
+          <div class="flags">
+            <div class="flagchip sans"><span class="t-zh">易利氣 台灣總代理</span><span class="t-ja">易利氣（Elekiban）台湾総代理店</span></div>
+            <div class="flagchip sans"><span class="t-zh">momo・蝦皮・PChome・Yahoo</span><span class="t-ja">momo・Shopee・PChome・Yahoo</span></div>
+          </div>
+          <div class="m sans"><span class="t-zh">本文件供內部與原廠溝通參考</span><span class="t-ja">本資料は社内および本社との協議用参考資料</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 (NEW) : 市場地位與排名 -->
+    <section class="slide" id="slide-2">
+      <div class="eyebrow sans">01 &nbsp;<span class="t-zh">市場地位</span><span class="t-ja">市場ポジション</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">境外電商中的台灣流量冠軍</span>
+        <span class="t-ja">越境ECカテゴリーにおける台湾トラフィック首位</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">台灣電商市場由蝦皮、momo兩大巨頭主導；Coupang尚未撼動龍頭地位，但在「境外電商」類別中，已是台灣流量最高的海外平台。</span>
+        <span class="t-ja">台湾EC市場はShopeeとmomoの2強が主導。Coupangはまだ上位2社の地位を脅かすには至っていないが、「越境EC」カテゴリーでは台湾トラフィック最大級の海外系プラットフォームとなっている。</span>
+      </p>
+
+      <div class="statbox">
+        <div class="statrow">
+          <div class="statname sans"><span class="t-zh">蝦皮（台灣市場龍頭）</span><span class="t-ja">Shopee（台湾EC最大手）</span></div>
+          <div class="barwrap"><div class="barfill" style="width:100%; background:var(--shopee);"><span>6,030萬 / 万</span></div></div>
+          <div class="statval sans"><span class="t-zh">月流量（人次）</span><span class="t-ja">月間トラフィック（訪問数）</span></div>
+        </div>
+        <div class="statrow">
+          <div class="statname sans">Coupang（<span class="t-zh">境外電商第一</span><span class="t-ja">越境EC首位</span>）</div>
+          <div class="barwrap"><div class="barfill" style="width:8%; background:var(--rocket);"><span>478萬 / 万</span></div></div>
+          <div class="statval sans"><span class="t-zh">月流量（人次）</span><span class="t-ja">月間トラフィック（訪問数）</span></div>
+        </div>
+        <div class="statrow">
+          <div class="statname sans"><span class="t-zh">淘寶海外站</span><span class="t-ja">淘宝（Taobao）海外版</span></div>
+          <div class="barwrap"><div class="barfill" style="width:7.3%; background:#B7AFA0;"><span>441萬 / 万</span></div></div>
+          <div class="statval sans"><span class="t-zh">月流量（人次）</span><span class="t-ja">月間トラフィック（訪問数）</span></div>
+        </div>
+        <div class="statrow">
+          <div class="statname sans"><span class="t-zh">美國亞馬遜</span><span class="t-ja">米国Amazon</span></div>
+          <div class="barwrap"><div class="barfill" style="width:6.7%; background:#B7AFA0;"><span>403萬 / 万</span></div></div>
+          <div class="statval sans"><span class="t-zh">月流量（人次）</span><span class="t-ja">月間トラフィック（訪問数）</span></div>
+        </div>
+      </div>
+      <p class="lede sans" style="margin-top:14px; font-size:13.5px;">
+        <span class="t-zh">＊蝦皮數據為本土電商流量，與境外電商流量統計基準不同，僅供規模對照；資料期間2024Q4–2025Q1</span>
+        <span class="t-ja">＊Shopeeは台湾市場向けEC、他3社は越境ECの集計であり、基準が異なる点に留意（規模比較の参考値）。集計期間：2024Q4〜2025Q1</span>
+      </p>
+    </section>
+
+    <!-- SLIDE 3 (NEW) : 市場占有率 -->
+    <section class="slide" id="slide-3">
+      <div class="eyebrow sans">02 &nbsp;<span class="t-zh">市場占有率</span><span class="t-ja">市場シェア</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">momo與蝦皮穩守，Coupang急起直追</span>
+        <span class="t-ja">momoとShopeeが堅守、Coupangが急追</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">2024年基準：蝦皮、momo合計市占率近半，Coupang尚未公布單獨市占數字，但成長速度是三者中最快的。</span>
+        <span class="t-ja">2024年基準：Shopeeとmomoの合計シェアは市場の約半分を占める。Coupangは単独シェアを未公表だが、3社の中で最も高い成長率を示している。</span>
+      </p>
+
+      <div class="donut-row">
+        <svg width="260" height="260" viewBox="0 0 260 260">
+          <circle cx="130" cy="130" r="100" fill="none" stroke="#EEEAE0" stroke-width="34"/>
+          <circle cx="130" cy="130" r="100" fill="none" stroke="var(--shopee)" stroke-width="34"
+            stroke-dasharray="188 440" stroke-dashoffset="0" transform="rotate(-90 130 130)" stroke-linecap="butt"/>
+          <circle cx="130" cy="130" r="100" fill="none" stroke="var(--momo)" stroke-width="34"
+            stroke-dasharray="151 440" stroke-dashoffset="-188" transform="rotate(-90 130 130)"/>
+          <circle cx="130" cy="130" r="100" fill="none" stroke="var(--rocket)" stroke-width="34"
+            stroke-dasharray="38 440" stroke-dashoffset="-339" transform="rotate(-90 130 130)"/>
+          <text x="130" y="124" text-anchor="middle" font-size="15" fill="var(--ink-soft)" font-family="Noto Sans TC">
+            <tspan class="t-zh">推估市占</tspan>
+          </text>
+          <text x="130" y="146" text-anchor="middle" font-size="13" fill="var(--ink-soft)" font-family="Noto Sans TC">2024</text>
+        </svg>
+        <div class="legend">
+          <div class="li"><span class="sw" style="background:var(--shopee)"></span>
+            <span class="sans"><span class="t-zh">蝦皮 Shopee</span><span class="t-ja">Shopee（蝦皮）</span></span>
+            <span class="num serif">20–30%</span>
+          </div>
+          <div class="li"><span class="sw" style="background:var(--momo)"></span>
+            <span class="sans">momo</span>
+            <span class="num serif">24%<span style="font-weight:400; font-size:12px; color:var(--ink-soft);"> ／ 1,125.6<span class="t-zh">億元</span><span class="t-ja">億台湾ドル</span></span></span>
+          </div>
+          <div class="li"><span class="sw" style="background:var(--rocket)"></span>
+            <span class="sans">Coupang</span>
+            <span class="num serif"><span class="t-zh">未公開</span><span class="t-ja">非公表</span></span>
+          </div>
+          <div class="li" style="margin-top:8px; border-top:1px solid var(--line); padding-top:14px;">
+            <span class="sans" style="font-size:13px; color:var(--ink-soft);">
+              <span class="t-zh">Coupang 2025年Q2營收：季增54%・年增三位數</span>
+              <span class="t-ja">Coupang 2025年Q2売上：前期比+54%・前年比3桁成長</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 (NEW) : 三強比較 -->
+    <section class="slide" id="slide-4">
+      <div class="eyebrow sans">03 &nbsp;<span class="t-zh">三強比較</span><span class="t-ja">3社比較</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">Shopee・momo・Coupang　優勢與風險</span>
+        <span class="t-ja">Shopee・momo・Coupangの強みとリスク</span>
+      </h1>
+
+      <div class="cards-row">
+        <div class="pcard shopee">
+          <div class="tag">Shopee</div>
+          <h3 class="serif"><span class="t-zh">蝦皮</span><span class="t-ja">蝦皮（Shopee／ショッピー）</span></h3>
+          <div class="block-label sans"><span class="t-zh">優勢</span><span class="t-ja">強み</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">台灣流量最大、滲透率最高</span><span class="t-ja">台湾市場で最大級の集客力と高い市場浸透率</span></li>
+            <li><span class="t-zh">社群導購、補貼策略靈活</span><span class="t-ja">SNSを活用した集客と柔軟な販促施策</span></li>
+          </ul>
+          <div class="block-label sans"><span class="t-zh">風險</span><span class="t-ja">リスク</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">高度依賴中國供應鏈</span><span class="t-ja">中国サプライチェーンへの高い依存</span></li>
+            <li><span class="t-zh">兩岸情勢緊張時有斷鏈疑慮</span><span class="t-ja">両岸情勢の緊迫化による供給途絶リスク</span></li>
+          </ul>
+        </div>
+        <div class="pcard momo">
+          <div class="tag">momo</div>
+          <h3 class="serif">momo</h3>
+          <div class="block-label sans"><span class="t-zh">優勢</span><span class="t-ja">強み</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">品牌信任度高、物流體系完善</span><span class="t-ja">高いブランド信頼性と充実した物流網</span></li>
+            <li><span class="t-zh">富邦集團資源挹注穩健</span><span class="t-ja">富邦グループによる安定した資本基盤</span></li>
+          </ul>
+          <div class="block-label sans"><span class="t-zh">風險</span><span class="t-ja">リスク</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">線上成長動能趨緩</span><span class="t-ja">オンライン市場の成長鈍化</span></li>
+            <li><span class="t-zh">介面複雜、運費偏高</span><span class="t-ja">UIの複雑さと割高な送料</span></li>
+          </ul>
+        </div>
+        <div class="pcard coupang">
+          <div class="tag">Coupang</div>
+          <h3 class="serif">Coupang<span class="t-zh">（酷澎）</span><span class="t-ja">（クーパン）</span></h3>
+          <div class="block-label sans"><span class="t-zh">優勢</span><span class="t-ja">強み</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">跨境長尾商品、選品差異化</span><span class="t-ja">越境商品とロングテール商材による品揃えの差別化</span></li>
+            <li><span class="t-zh">火箭速配・跨境極速物流</span><span class="t-ja">ロケット配送と越境物流による迅速な配送体制</span></li>
+          </ul>
+          <div class="block-label sans"><span class="t-zh">風險</span><span class="t-ja">リスク</span></div>
+          <ul class="sans">
+            <li><span class="t-zh">負毛利策略引發供應商反彈</span><span class="t-ja">低価格戦略に対するサプライヤーの反発</span></li>
+            <li><span class="t-zh">尚未獲利、個資外洩衝擊信任</span><span class="t-ja">黒字化の遅れと情報漏えいによる信頼低下</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 (NEW) : 消費者觀感 / 信任危機 timeline -->
+    <section class="slide" id="slide-5">
+      <div class="eyebrow sans">04 &nbsp;<span class="t-zh">消費者觀感</span><span class="t-ja">消費者の評判</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">信任危機：個資外洩事件時間軸</span>
+        <span class="t-ja">信頼危機：個人情報漏えい事件のタイムライン</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">Coupang最大優勢是低價與速度，但2025–2026年的個資外洩事件，是目前品牌形象上最大的負面因素。</span>
+        <span class="t-ja">Coupangの最大の強みは低価格とスピードだが、2025〜2026年の情報漏えい事件は、現時点でブランドイメージ最大の逆風となっている。</span>
+      </p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date sans">2025.11</div>
+          <div class="tl-text sans">
+            <span class="t-zh">韓國酷澎爆發約3,370萬帳號個資外洩，起初聲稱台灣端「沒有證據顯示」受影響。</span>
+            <span class="t-ja">韓国Coupangで約3,370万アカウントの情報漏えいが発覚。当初「台湾側への影響は確認されていない」と説明。</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date sans">2025.12</div>
+          <div class="tl-text sans">
+            <span class="t-zh">台灣消費者信心開始動搖，部分用戶主動解除信用卡綁定以策安全。</span>
+            <span class="t-ja">台湾消費者の信頼が揺らぎ始め、一部ユーザーは念のため登録済みクレジットカード情報を削除。</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date sans">2026.02</div>
+          <div class="tl-text sans">
+            <span class="t-zh">第三方資安公司（Mandiant）鑑識確認：20萬4,552名台灣用戶資料遭非法讀取。</span>
+            <span class="t-ja">第三者調査（Mandiant）により、台湾ユーザー20万4,552人分のデータが不正に閲覧されたことが確認された。</span>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date sans">2026.02</div>
+          <div class="tl-text sans">
+            <span class="t-zh">酷澎提出約新台幣2億元折價券補償方案，須消費後才能折抵，遭批評「假賠償、真促銷」。</span>
+            <span class="t-ja">総額約2億台湾ドルのクーポン補償を発表するも、利用には購入が条件となっており「見せかけの補償、実質は販促」と批判を受ける。</span>
+          </div>
+        </div>
+      </div>
+      <p class="footnote sans" style="margin-top:8px;">
+        <span class="t-zh">＊資料來源：公開報導與本公司市場調查整理</span>
+        <span class="t-ja">出所：公開報道および当方調査に基づく</span>
+      </p>
+    </section>
+
+    <!-- SLIDE 6 : 現況 平台熱度 ≠ 品類熱度 -->
+    <section class="slide" id="slide-6">
+      <div class="eyebrow sans">05 &nbsp;<span class="t-zh">現況確認</span><span class="t-ja">現状確認</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">平台整體成長，不等於本品類成長</span>
+        <span class="t-ja">プラットフォーム全体の成長 ≠ 本カテゴリーの成長</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">Coupang整體營收高速成長，但這是平台總體數據，不代表磁力項圈這類品項同步受惠。我方實際進貨與週轉數據，是比宏觀市場報告更精準的判斷依據。</span>
+        <span class="t-ja">Coupangの全社売上は急成長しているが、これはプラットフォーム全体の数値であり、磁力ネックレスというカテゴリーが同様に恩恵を受けているとは限らない。実際の仕入・在庫回転データは、マクロな市場レポートより精度の高い判断材料である。</span>
+      </p>
+
+      <div class="scalebox">
+        <div class="scale-row">
+          <div class="scale-side">
+            <div class="big-label sans"><span class="t-zh">Coupang 平台整體</span><span class="t-ja">Coupang 全社ベース</span></div>
+            <div class="big-num">+54%</div>
+            <div class="big-sub sans"><span class="t-zh">2025年Q2營收季增（三位數年增）</span><span class="t-ja">2025年Q2 売上前期比（前年比は3桁成長）</span></div>
+          </div>
+          <div class="scale-vs"></div>
+          <div class="scale-side warn">
+            <div class="big-label sans"><span class="t-zh">易利氣 實際進貨週轉</span><span class="t-ja">易利氣 実際の在庫回転</span></div>
+            <div class="big-num serif"><span class="t-zh">偏低</span><span class="t-ja">低水準</span></div>
+            <div class="big-sub sans"><span class="t-zh">經銷商進貨後，銷售期拉得很長</span><span class="t-ja">卸業者が仕入れた在庫の販売期間が長期化</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checklist">
+        <div class="check-item">
+          <div class="ci">1</div>
+          <div class="ct sans"><span class="t-zh">Coupang上架商品並非我方或原廠授權，而是第三方藥局／醫材商（如禾坊醫療器材）小量鋪貨</span><span class="t-ja">Coupangに出品されている商品は当方または本社が承認した正規出品ではなく、第三者の薬局・医療機器業者（禾坊医療器材など）による小規模な出品</span></div>
+        </div>
+        <div class="check-item">
+          <div class="ci">2</div>
+          <div class="ct sans"><span class="t-zh">Coupang 的成長主要集中於跨境快速消費品，尚未反映在磁力項圈這類「高單價、非高頻回購」品項</span><span class="t-ja">Coupangの成長は越境の高回転消費財に集中しており、磁力ネックレスのような「単価が高く、購入頻度が低い」商品にはまだ波及していない</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 (NEW) : 兩通路價格比較實證 -->
+    <section class="slide" id="slide-7">
+      <div class="eyebrow sans">06 &nbsp;<span class="t-zh">價格比較實證</span><span class="t-ja">価格比較の実証</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">兩通路實際售價比對：Coupang　vs　大法官網</span>
+        <span class="t-ja">2チャネル実売価格比較：Coupang　対　大法官網（当方公式ECサイト）</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">實際比對Coupang搜尋頁與大法生技商城（我方官方通路）的售價，驗證「價格秩序尚未被破壞」的判斷，並找出需持續留意的例外品項。</span>
+        <span class="t-ja">Coupang検索結果ページと大法生技商城（当方公式ECサイト）の実売価格を比較し、「価格秩序はまだ崩れていない」という判断を検証するとともに、注視すべき例外品目を特定する。</span>
+      </p>
+
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th class="sans"><span class="t-zh">商品品項</span><span class="t-ja">商品</span></th>
+            <th class="sans">Coupang</th>
+            <th class="sans"><span class="t-zh">大法官網（原價→折後）</span><span class="t-ja">大法官網（定価→セール価格）</span></th>
+            <th class="sans"><span class="t-zh">價差</span><span class="t-ja">価格差</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="prod sans"><span class="t-zh">磁力項圈 MAX 60cm黑色</span><span class="t-ja">磁力ネックレス MAX 60cm 黒</span><span class="subtext t-zh">2000高斯</span><span class="subtext t-ja">2000ガウス</span></td>
+            <td class="price-cp sans">NT$978–990<span class="subtext sans"><span class="t-zh">多賣家在售</span><span class="t-ja">複数出品者</span></span></td>
+            <td class="price-official sans">NT$1,200→990<span class="subtext sans">18% OFF</span></td>
+            <td><span class="diff-tag flat sans"><span class="t-zh">幾乎持平</span><span class="t-ja">ほぼ同水準</span></span></td>
+          </tr>
+          <tr>
+            <td class="prod sans"><span class="t-zh">磁力項圈 EX 50cm強力型</span><span class="t-ja">磁力ネックレス EX 50cm 強力型</span><span class="subtext t-zh">1500高斯</span><span class="subtext t-ja">1500ガウス</span></td>
+            <td class="price-cp sans">NT$720</td>
+            <td class="price-official sans">NT$890→790<span class="subtext sans">11% OFF</span></td>
+            <td><span class="diff-tag lower sans"><span class="t-zh">Coupang較低 −9%</span><span class="t-ja">Coupangが9%安い</span></span></td>
+          </tr>
+          <tr>
+            <td class="prod sans"><span class="t-zh">磁力項圈 AiryFree</span><span class="t-ja">磁力ネックレス AiryFree</span><span class="subtext t-zh">550高斯・超輕薄</span><span class="subtext t-ja">550ガウス・超薄型</span></td>
+            <td class="price-cp sans">NT$899</td>
+            <td class="price-official sans">NT$990→699<span class="subtext sans">29% OFF</span></td>
+            <td><span class="diff-tag higher sans"><span class="t-zh">Coupang較高 +29%</span><span class="t-ja">Coupangが29%高い</span></span></td>
+          </tr>
+          <tr>
+            <td class="prod sans"><span class="t-zh">磁力貼 MAX2000高斯</span><span class="t-ja">磁気パッチ MAX2000ガウス</span><span class="subtext t-zh">單盒12粒</span><span class="subtext t-ja">1箱12粒</span></td>
+            <td class="price-cp sans">NT$240–259<span class="subtext sans"><span class="t-zh">多賣家在售</span><span class="t-ja">複数出品者</span></span></td>
+            <td class="price-official sans">NT$530→399<span class="subtext sans">25% OFF<span class="t-zh">・限量熱銷</span><span class="t-ja">・数量限定</span></span></td>
+            <td><span class="diff-tag lower sans"><span class="t-zh">Coupang明顯較低 −35~40%</span><span class="t-ja">Coupangが35〜40%安い</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box sans">
+        <span class="t-zh"><b>觀察重點：</b>磁力項圈類商品兩通路價格互有高低、大致持平，尚未看到系統性低價傾銷；但磁力貼（耗材）類商品，Coupang第三方賣家價格明顯低於我方官網單盒價（約低35–40%），與「重新評估觸發點③：出現水貨低價傾銷」高度相關，建議列為後續重點觀察對象，其餘品項暫不需特別因應。</span>
+        <span class="t-ja"><b>着目点：</b>磁力ネックレス系の商品は両チャネルで価格が拮抗しほぼ同水準であり、継続的な安値攻勢は見られない。一方、磁気パッチ（消耗品）系は、Coupangの第三者出品価格が当方公式ECの単箱価格より明らかに低く（約35〜40%安）、「再評価トリガー③：並行輸入品による安値攻勢」と強く関連する。今後の重点監視対象とし、その他の品目については現時点で特段の対応は不要と考える。</span>
+      </div>
+      <div class="footnote sans">
+        <span class="t-zh">＊大法官網為促銷檔期折扣價；Coupang為多家第三方賣家即時報價，兩者計價基準不完全相同，僅供參考比較</span>
+        <span class="t-ja">＊大法官網はセール期間中の割引価格。Coupangは複数の第三者出品者によるリアルタイム価格であり、算定基準は完全には一致しない点に留意（参考比較値）</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : 進駐 vs 維持現狀 -->
+    <section class="slide" id="slide-8">
+      <div class="eyebrow sans">07 &nbsp;<span class="t-zh">通路影響評估</span><span class="t-ja">チャネル影響評価</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">正式進駐　vs　維持現狀</span>
+        <span class="t-ja">Coupangへの正式出品　vs　現状維持</span>
+      </h1>
+
+      <div class="compare-row">
+        <div class="compare-col enter">
+          <div class="compare-tag"><span class="t-zh">若正式進駐</span><span class="t-ja">正式進出した場合</span></div>
+          <h3 class="serif"><span class="t-zh">需投入資源與談判成本</span><span class="t-ja">リソースと交渉コストが必要</span></h3>
+          <ul class="sans">
+            <li><span class="t-zh">需另外談判上架條件，可能配合Coupang補貼／低價要求</span><span class="t-ja">出品条件の交渉が必要で、Coupang側からの値引き・販促協力要請に応じる必要が生じる可能性</span></li>
+            <li><span class="t-zh">需重新協調momo／蝦皮官方店的定價一致性</span><span class="t-ja">momo・Shopee公式店との価格の整合性を再調整する必要</span></li>
+            <li><span class="t-zh">需承擔Coupang個資外洩事件對平台信任度的連帶影響</span><span class="t-ja">Coupangの情報漏えい問題によるブランドイメージへの波及リスク</span></li>
+            <li><span class="t-zh">佔用行銷／營運資源在需求尚未成熟的通路</span><span class="t-ja">需要がまだ成熟していないチャネルに人的リソースを割く機会損失</span></li>
+          </ul>
+        </div>
+        <div class="compare-col hold">
+          <div class="compare-tag"><span class="t-zh">若維持現狀</span><span class="t-ja">現状維持した場合</span></div>
+          <h3 class="serif"><span class="t-zh">零額外資源、風險可控</span><span class="t-ja">追加リソース不要、リスクは限定的</span></h3>
+          <ul class="sans">
+            <li><span class="t-zh">現有人力可專注momo／蝦皮／PChome／Yahoo既有主力通路</span><span class="t-ja">既存人員はmomo・Shopee・PChome・Yahooという主力チャネルに専念できる</span></li>
+            <li><span class="t-zh">第三方賣家目前定價與官方店幾乎打平（$999 vs $990），未破壞市場行情</span><span class="t-ja">第三者出品者の価格は公式価格とほぼ同水準（999元 対 990元）で、市場価格は崩れていない</span></li>
+            <li><span class="t-zh">不涉入Coupang資安爭議，不受牽連</span><span class="t-ja">Coupangの情報セキュリティ問題に巻き込まれない</span></li>
+            <li><span class="t-zh">未來若流量成長，仍可隨時補位進場</span><span class="t-ja">今後トラフィックが伸びた場合も、後から参入を検討する余地は十分にある</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : 四個理由 -->
+    <section class="slide" id="slide-9">
+      <div class="eyebrow sans">08 &nbsp;<span class="t-zh">判斷依據</span><span class="t-ja">判断根拠</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">支持「暫不主動投入」的四個理由</span>
+        <span class="t-ja">「積極投資を見送る」根拠となる4つの理由</span>
+      </h1>
+
+      <div class="reason-grid">
+        <div class="reason">
+          <div class="rn">01</div>
+          <div class="rt sans"><b><span class="t-zh">實際數據優先於平台故事</span><span class="t-ja">実データが成長ストーリーに優先</span></b>
+          <span class="t-zh">平台整體成長不代表本品類同步受惠，週轉率是最直接的證據</span>
+          <span class="t-ja">全社成長がこのカテゴリーへの波及を意味するとは限らず、在庫回転率が最も直接的な証拠となる</span></div>
+        </div>
+        <div class="reason">
+          <div class="rn">02</div>
+          <div class="rt sans"><b><span class="t-zh">價格秩序尚未被破壞</span><span class="t-ja">価格秩序はまだ崩れていない</span></b>
+          <span class="t-zh">現有第三方賣家的售價與官方通路幾乎一致，沒有迫切介入的必要</span>
+          <span class="t-ja">既存の第三者出品価格は公式チャネルとほぼ一致しており、緊急に介入する必要性は低い</span></div>
+        </div>
+        <div class="reason">
+          <div class="rn">03</div>
+          <div class="rt sans"><b><span class="t-zh">資源應優先鞏固主力通路</span><span class="t-ja">リソースは主力チャネルの強化を優先すべき</span></b>
+          <span class="t-zh">momo、蝦皮已驗證ROI，應把既有優勢做深做透</span>
+          <span class="t-ja">momoやShopeeはROIが実証済みであり、既存の強みをさらに深耕すべき</span></div>
+        </div>
+        <div class="reason">
+          <div class="rn">04</div>
+          <div class="rt sans"><b><span class="t-zh">Coupang信任度處於低點</span><span class="t-ja">Coupangへの信頼性には懸念が残る</span></b>
+          <span class="t-zh">個資外洩事件仍在延燒，此時並非最佳進場時機</span>
+          <span class="t-ja">情報漏えい問題が尾を引いており、参入の好機とは言えない</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : 風險對沖 -->
+    <section class="slide" id="slide-10">
+      <div class="eyebrow sans">09 &nbsp;<span class="t-zh">風險對沖</span><span class="t-ja">リスクヘッジ</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">不投入資源，但保留的三個低成本動作</span>
+        <span class="t-ja">リソースは投入しないが、実施する3つの低コスト施策</span>
+      </h1>
+      <p class="lede sans">
+        <span class="t-zh">「暫不投入」不等於「完全不管」。以下動作幾乎零成本，但能有效防範下檔風險。</span>
+        <span class="t-ja">「投資を見送る」ことは「放置する」こととは異なる。以下の施策はほぼコストゼロで、潜在リスクを抑えることができる。</span>
+      </p>
+
+      <div class="checklist" style="margin-top:32px;">
+        <div class="check-item">
+          <div class="ci">1</div>
+          <div class="ct sans"><span class="t-zh">每季度快速檢查第三方賣家的定價、庫存、評論數是否出現異常變化</span><span class="t-ja">四半期ごとに第三者出品者の価格・在庫・レビュー数の異常変化を確認する</span></div>
+        </div>
+        <div class="check-item">
+          <div class="ci">2</div>
+          <div class="ct sans"><span class="t-zh">確認貨源合法性，留意其醫療器材許可字號登載是否合規</span><span class="t-ja">仕入れルートの適法性を確認し、医療機器許可番号の表示が適正かを注視する</span></div>
+        </div>
+        <div class="check-item">
+          <div class="ci">3</div>
+          <div class="ct sans"><span class="t-zh">不簽署官方旗艦店協議、不投入任何行銷資源，除非觸發重新評估指標</span><span class="t-ja">再評価のトリガーが発生しない限り、公式店契約の締結やマーケティング予算の投入は行わない</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : 觸發點 -->
+    <section class="slide" id="slide-11">
+      <div class="eyebrow sans">10 &nbsp;<span class="t-zh">重新評估機制</span><span class="t-ja">再評価メカニズム</span></div>
+      <h1 class="title serif">
+        <span class="t-zh">出現以下訊號，將重新啟動評估</span>
+        <span class="t-ja">以下のシグナルが見られた場合、再評価を開始する</span>
+      </h1>
+
+      <ul class="trigger-list">
+        <li><span class="tag2 sans">01</span>
+          <span class="sans"><span class="t-zh">第三方賣家的評論數、庫存周轉速度出現明顯提升（例如半年內評論數翻倍以上）</span><span class="t-ja">第三者出品者のレビュー数・在庫回転速度が明確に上昇（例：半年でレビュー数が倍増）</span></span>
+        </li>
+        <li><span class="tag2 sans">02</span>
+          <span class="sans"><span class="t-zh">momo／蝦皮的成長明顯放緩，而Coupang保健醫療品類流量持續攀升</span><span class="t-ja">momo・Shopeeの成長が明確に鈍化する一方、Coupangのヘルスケアカテゴリーのトラフィックが上昇を続ける</span></span>
+        </li>
+        <li><span class="tag2 sans">03</span>
+          <span class="sans"><span class="t-zh">出現非授權賣家用明顯低於行情的價格傾銷易利氣（水貨低價衝擊品牌價格帶）——磁力貼類目前已觀察到約35–40%價差，列為重點追蹤項目</span><span class="t-ja">無許可の出品者が易利氣を市場価格を大きく下回る価格で販売する（並行輸入品によるブランド価格帯への影響）——磁気パッチ系では現時点で約35〜40%の価格差を確認しており、重点監視項目とする</span></span>
+        </li>
+        <li><span class="tag2 sans">04</span>
+          <span class="sans"><span class="t-zh">Coupang個資外洩事件的信任危機明顯緩解，平台聲量止穩回升</span><span class="t-ja">Coupangの情報漏えいに伴う信頼危機が明確に沈静化し、プラットフォームの評判が回復基調に転じる</span></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- SLIDE 7 : 結論 -->
+    <section class="slide" id="slide-12">
+      <div class="eyebrow sans">11 &nbsp;<span class="t-zh">結論</span><span class="t-ja">結論</span></div>
+      <h1 class="title serif big">
+        <span class="t-zh">現階段，不需要把心力分散到Coupang</span>
+        <span class="t-ja">現段階で、Coupangにリソースを分散させる必要はない</span>
+      </h1>
+      <div class="final-quote sans">
+        <span class="t-zh">綜合實際銷售週轉數據與通路成本效益分析，我們作為台灣總代理，判斷易利氣目前<b>不需要</b>將行銷與營運資源分散至Coupang。</span>
+        <span class="t-ja">実際の販売回転データとチャネル費用対効果の分析を踏まえ、台湾総代理店として、易利氣は現時点でCoupangにマーケティング・運営リソースを分散させる<b>必要はない</b>と判断する。</span>
+      </div>
+      <div class="final-box">
+        <div class="fb-label sans"><span class="t-zh">建議行動</span><span class="t-ja">推奨アクション</span></div>
+        <div class="fb-text sans">
+          <span class="t-zh">將資源集中在momo、蝦皮、PChome、Yahoo等已驗證的主力通路，對Coupang採取「低成本觀察、保留彈性」策略，待觸發指標出現後再重新評估投入時機。</span>
+          <span class="t-ja">momo・Shopee・PChome・Yahooといった実績のある主力チャネルにリソースを集中し、Coupangに対しては「低コストでの経過観察、柔軟性の維持」という方針を取る。再評価のトリガーが発生した時点で、改めて投資タイミングを検討する。</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="chrome-bottom">
+      <div class="pageinfo sans"><span id="pagecur">01</span> / 12</div>
+      <div class="dots" id="dots"></div>
+      <div class="navbtns">
+        <button onclick="go(-1)">&#8592;</button>
+        <button onclick="go(1)">&#8594;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const total = 12;
+  let cur = 1;
+  const dotsWrap = document.getElementById('dots');
+  for(let i=1;i<=total;i++){
+    const d = document.createElement('span');
+    d.dataset.i = i;
+    if(i===1) d.classList.add('active');
+    d.onclick = () => showSlide(i);
+    dotsWrap.appendChild(d);
+  }
+  function showSlide(n){
+    if(n<1 || n>total) return;
+    document.getElementById('slide-'+cur).classList.remove('active');
+    cur = n;
+    document.getElementById('slide-'+cur).classList.add('active');
+    document.getElementById('pagecur').textContent = String(cur).padStart(2,'0');
+    [...dotsWrap.children].forEach(d => d.classList.toggle('active', +d.dataset.i === cur));
+  }
+  function go(delta){ showSlide(cur+delta); }
+  function setLang(l){
+    document.body.setAttribute('data-lang', l);
+    document.getElementById('btn-zh').classList.toggle('active', l==='zh');
+    document.getElementById('btn-ja').classList.toggle('active', l==='ja');
+  }
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight') go(1);
+    if(e.key === 'ArrowLeft') go(-1);
+  });
+  function fitStage(){
+    const stage = document.getElementById('stage');
+    const scale = Math.min(window.innerWidth/1280, window.innerHeight/720);
+    stage.style.transform = 'scale('+scale+')';
+  }
+  window.addEventListener('resize', fitStage);
+  fitStage();
+</script>
+
+</body>
+</html>
